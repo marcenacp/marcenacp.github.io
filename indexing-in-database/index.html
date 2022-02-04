@@ -20,8 +20,8 @@ Pierre Marcenac - Database Indexes Explained to Software Developers
 <link rel=preconnect href=https://fonts.googleapis.com>
 <link rel=preconnect href=https://fonts.gstatic.com crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
-<link rel=stylesheet href=/minima.1643994182.css>
-<script defer type=text/javascript src=/minima.1643994182.js></script>
+<link rel=stylesheet href=/minima.1643994279.css>
+<script defer type=text/javascript src=/minima.1643994279.js></script>
 </head>
 <script>let theme_2b_used=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';try{if(!('theme'in localStorage)){const a='system';(a==='dark'||a==='light')&&(theme_2b_used=a),localStorage.theme=theme_2b_used}document.querySelector('html').classList.add(localStorage.theme)}catch(a){console.error(a)}</script>
 <body class="sm:mx-5 sm:my-0">
@@ -151,8 +151,8 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
 </span><span class=lnt>2
 </span></code></pre></td>
 <td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>▶ ls database.db
-  rw-r--r--   <span class=m>1</span>   pierre   staff     <span class=m>489</span> MiB   database.db
+<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>▶ ls mini.db
+  rw-r--r--   <span class=m>1</span>   pierre   staff     <span class=m>489</span> MiB   mini.db
 </code></pre></td></tr></table>
 </div>
 </div><p>We can choose a random row that we will use throughout the example.</p>
@@ -336,7 +336,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
     &quot;5ca59471-a19b-4996-9c80-6b9379afae13&quot;: 872363,
     ...
 }
-</code></pre><p>where <code>872363</code> is the number of the row attached to <code>Bobby Stuart</code> in the file <code>database.db</code>.</p>
+</code></pre><p>where <code>872363</code> is the number of the row attached to <code>Bobby Stuart</code> in the file <code>mini.db</code>.</p>
 <p>Given a UUID, retrieving a record is now pretty trivial. I use <code>HASH</code> to see the corresponding row number in the database, then I use <a href=https://docs.python.org/3/library/linecache.html><code>linecache</code></a> to get the record.</p>
 <div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>

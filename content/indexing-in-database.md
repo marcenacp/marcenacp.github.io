@@ -72,8 +72,8 @@ seed()
 The created database weighs approximately 489 MiB. Can we call this big data already?
 
 ```bash
-▶ ls database.db
-  rw-r--r--   1   pierre   staff     489 MiB   database.db
+▶ ls mini.db
+  rw-r--r--   1   pierre   staff     489 MiB   mini.db
 ```
 
 We can choose a random row that we will use throughout the example.
@@ -200,7 +200,7 @@ So HASH looks like:
 }
 ```
 
-where `872363` is the number of the row attached to `Bobby Stuart` in the file `database.db`.
+where `872363` is the number of the row attached to `Bobby Stuart` in the file `mini.db`.
 
 Given a UUID, retrieving a record is now pretty trivial. I use `HASH` to see the corresponding row number in the database, then I use [`linecache`](https://docs.python.org/3/library/linecache.html) to get the record.
 

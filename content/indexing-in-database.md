@@ -11,13 +11,13 @@ categories: ['database', 'postgresql']
 >
 > As a software engineer, you've probably heard this sentence a few times. This blog post will guide you through understanding how indexing works.
 >
-> The code in this blog post executes by order of appearance. So I encourage you to follow along by copy/pasting it in a notebook. I used `Python 3.9`. You'll the following dependencies: `pip install bplustree faker numpy tqdm`.
+> The code in this blog post executes by order of appearance. So I encourage you to follow along by copy/pasting it in a notebook. I used `Python 3.9`. You'll need the following dependencies: `pip install bplustree faker numpy tqdm`.
 
 ---
 
 # A minimal database in Python
 
-First, we will need a minimal database in Python. The very minimal features of a database are: 1) `append` a new record and 2) `read` from the database.
+First, we will need a minimal database in Python. The very minimal features of a database are 1) `append` a new record and 2) `read` from the database.
 
 ```python
 import uuid
@@ -69,7 +69,7 @@ seed()
 # 100%|██████████| 10000000/10000000 [30:58<00:00, 5381.77it/s]
 ```
 
-The created database weighs approximately 489 MiB. Can we call this big data already?
+The created database weighs approximately 489 MiB. Can we call this big data already? 😉
 
 ```bash
 ▶ ls mini.db
@@ -102,7 +102,7 @@ with open(DATABASE) as database:
 
 Hello, Mr. Stuart! The goal of this article will be to retrieve the record `RANDOM_ID` (aka `Bobby Stuart`) using different techniques. To benchmark all these techniques, a Python decorator keeps track of time. The following decorator takes care of:
 
-- calling the functions 10 times to make sure we average the execution time on several calls to be statistically pertinent;
+- calling the functions ten times to make sure we average the execution time on several calls to be statistically pertinent;
 - computing the mean execution time and printing it back to the user.
 
 ```python
@@ -134,7 +134,7 @@ def time_tracker():
 
 # Table scan
 
-The most obvious technique to retrieve a record is to simply scan the whole table going through all records until we reach Bobby:
+The most obvious technique to retrieve a record is to scan the whole table going through all rows until we reach Bobby:
 
 ```python
 @time_tracker()
@@ -159,15 +159,15 @@ print(name)
 
 The cost of this lookup is linear in the size of the database, which is computationally not acceptable in the era of big data. We call this algorithmic complexity `O(n)` where `n` is the number of rows in the database.
 
-Now imagine our database was a bit more complex. For example, `persons` have many `addresses`. If you are retrieving a certain address of a certain person, you'd have to look through all addresses of all persons (`O(n x m)`).
+Now imagine our database was a bit more complex. For example, `persons` may have many `addresses`. If you are retrieving the address of a particular person, you'd have to look through all addresses of all persons (`O(n x m)`).
 
-So, looking up a record in a big table is not an ordinary operation. Joining tables makes the problem more obvious. That's where indexes come to play.
+So, looking up a record on a big table is not an ordinary operation. Joining tables amplifies the problem. That's where indexes come to play.
 
 ---
 
 # Hash indexes
 
-You have obviously used indexes in books:
+You have already used indexes in books:
 
 ![Image](/index-book.jpeg)
 
@@ -190,7 +190,7 @@ def index_hash():
             HASH[columns[0]] = line_number
 ```
 
-So HASH looks like:
+So `HASH` looks like this:
 
 ```
 {
@@ -200,7 +200,7 @@ So HASH looks like:
 }
 ```
 
-where `872363` is the number of the row attached to `Bobby Stuart` in the file `mini.db`.
+where `872363` is the row number corresponding to `Bobby Stuart` in the file `mini.db`.
 
 Given a UUID, retrieving a record is now pretty trivial. I use `HASH` to see the corresponding row number in the database, then I use [`linecache`](https://docs.python.org/3/library/linecache.html) to get the record.
 
@@ -225,9 +225,9 @@ print(name)
 # b4ff2b36-7a4f-45d6-b095-45701cad777b,Bobby Stuart
 ```
 
-We say the time complexity is `O(1)` because records are accessed in constant time.
+We say the time complexity is `O(1)` because we access records in constant time.
 
-However, this indexing technique requires to have the whole database in memory. This is not suitable for big data. Moreover, it only works for exact matching. Trying to retrieve all the records with a name that begins by `Bobby` would be no longer as optimal with this technique.
+However, this indexing technique requires having the whole database in memory, which is not suitable for big data. Moreover, it only works for exact matching. Trying to retrieve all the records with a name that begins by `Bobby` would no longer be optimal with this technique.
 
 > **Hash indexes**
 >
@@ -245,13 +245,13 @@ However, this indexing technique requires to have the whole database in memory. 
 
 # Binary trees
 
-Hash indexes have too many drawbacks. This is where binary trees (aka B-trees) come into play.
+Hash indexes have too many drawbacks. That's where binary trees (aka B-trees) come into play.
 
-B-trees are a way to order data, so that search, insertion and deletion are easy. Searching a record through a B-tree looks like this:
+B-trees are a way to order data so that search, insertion, and deletion are easy. Searching a record through a B-tree looks like this:
 
 ![B-tree](/index-btree.png)
 
-If the tree is balanced (_i.e._ all branches have the exact same number of nodes and leaves), we see that at each node you get to cut the remaining records to look for by half. So the maximal number of operations when looking a record (or time complexity $C_n$) is the height of the tree. Now, given there are `n` records in the database:
+If the tree is balanced (_i.e._ all branches have the same number of nodes and leaves), we see that, at each node, you get to cut the remaining records to look for by half. So the maximal number of operations when looking up a record (or time complexity $C_n$) equals the tree height. Now, given there are `n` records in the database:
 
 $$
 \begin{align*}
@@ -269,9 +269,9 @@ C_n & = \log_2(n)
 \end{align*}
 $$
 
-We say the time complexity is `O(log(n))`.
+The time complexity is `O(log(n))`.
 
-I used [`bplustree`](https://github.com/NicolasLM/bplustree) to manipulate disk-persisted trees in Python. We build the B-tree index and use it in few lines:
+I used [`bplustree`](https://github.com/NicolasLM/bplustree) to manipulate disk-persisted trees in Python. We build the B-tree index and use it in a few lines:
 
 ```python
 from bplustree import BPlusTree, UUIDSerializer
@@ -294,11 +294,11 @@ index_btree()
 name = find(RANDOM_ID)
 print(name)
 
-# find                 0.000456 seconds
+# find                 0.000467 seconds
 # b4ff2b36-7a4f-45d6-b095-45701cad777b,Bobby Stuart
 ```
 
-When computing the complexity, we saw that it's important to keep the B-tree perfectly balanced. When inserting a new record, this may require to split pages.
+When computing the complexity, we saw it is primordial to keep the B-tree perfectly balanced. When inserting a new record, this may require splitting pages.
 
 > **B-trees indexes**
 >
@@ -319,7 +319,7 @@ Real-life data is much more complex and structured than simple strings. For inst
 
 ```
 {
-    "text": "Database Indexes Explained to Software Developers",
+    "title": "Database Indexes",
     "tags": ["database", "postgresql"]
 }
 ```
@@ -332,9 +332,7 @@ When scanning structured data, you'd likely be interested in:
 - finding patterns with regular expressions (`'text' match "*indexes*"`)
 - identifying lexemes in documents (`"explain" in 'text'`, `tsvector` in PostgreSQL)
 
-For instance, if a database contains variations of a word: `identification`, `identifying`, `identified`, etc, when looking for `identify`, I would like to retrieve all the previous documents.
-
-Generalized Inverted Indexes (GIN) handle composite data like this. They create a first BTree of all
+For instance, if a database contains variations of a word: `identification`, `identifying`, `identified`, etc, when looking for `identify`, I would like to retrieve all the previous documents. Generalized Inverted Indexes (GIN) allow handling such composite data.
 
 ---
 
@@ -384,7 +382,7 @@ There you go: in this trivial scenario, GIN divided by 10 the response time of y
 
 # Sum it up
 
-Indexes are a must-have in databases as looking up a record can prove costly. This is particularly true when you manipulate big amount of data and when you need to join data efficiently.
+Indexes are a must-have in databases. Looking up a record can prove costly when you manipulate large amounts of data and when you need to join data efficiently.
 
 We saw three kinds of indexes:
 

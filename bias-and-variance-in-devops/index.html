@@ -20,8 +20,8 @@ Pierre Marcenac - Bias and Variance in Software Development
 <link rel=preconnect href=https://fonts.googleapis.com>
 <link rel=preconnect href=https://fonts.gstatic.com crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
-<link rel=stylesheet href=/minima.1645742935.css>
-<script defer type=text/javascript src=/minima.1645742935.js></script>
+<link rel=stylesheet href=/minima.1645775828.css>
+<script defer type=text/javascript src=/minima.1645775828.js></script>
 </head>
 <script>let theme_2b_used=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';try{if(!('theme'in localStorage)){const a='system';(a==='dark'||a==='light')&&(theme_2b_used=a),localStorage.theme=theme_2b_used}document.querySelector('html').classList.add(localStorage.theme)}catch(a){console.error(a)}</script>
 <body class="sm:mx-5 sm:my-0">
@@ -87,21 +87,22 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
 <p><strong>Bias</strong> is the difference between the expected features and the true features of the product. It is directly linked to the perception the customer has of the product.</p>
 </li>
 <li>
-<p><strong>Variance</strong> is a measure of the dispersion of the product. It is directly linked to code complexity, the variety of features, the factorization of the code.</p>
+<p><strong>Variance</strong> is a measure of the dispersion of the product. It is directly linked to code complexity, the variety of features, the factorization of the code, etc.</p>
 </li>
 </ul>
 <p>It allows to differentiate 3 realms in the above graph:</p>
 <ul>
 <li>
-<p>Startups have a very biased product with low performance.</p>
+<p>Startups have a very biased product (few features) and low variance (small product enveloppe). Both performance and product complexity can be low</p>
 </li>
 <li>
-<p>Giants have products that cover all possible features with high performance.</p>
+<p>Giants have products that cover all possible features with high performance. Costs of maintenance are extremly high.</p>
 </li>
 <li>
-<p>Scaleups are in-between. The code complexity is manageable, but performances are not always here.</p>
+<p>Scaleups are in-between. They have to find the equilibrium between managing bias and variance.</p>
 </li>
 </ul>
+<p>As a result, the tradeoff lies between product complexity (on the dev side) and performance (on the ops side).</p>
 <h1 id=finding-the-perfect-balance>Finding the perfect balance</h1>
 <p>There exist some solutions to this intrinsic problem.</p>
 <h3 id=1-ops-must-provide-tools-to-test-the-code-against-performance>1. Ops must provide tools to test the code against performance</h3>
@@ -131,7 +132,7 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
 </span></code></pre></td>
 <td class=lntd>
 <pre tabindex=0 class=chroma><code class=language-typescript data-lang=typescript><span class=kr>type</span> <span class=nx>Options</span> <span class=o>=</span> <span class=p>{</span>
-  <span class=nx>attributes</span>: <span class=kt>Exclude</span><span class=p>&lt;</span><span class=nt>string</span><span class=err>,</span> <span class=err>&#39;*&#39;</span><span class=p>&gt;[],</span>
+  <span class=nx>attributes</span>: <span class=kt>Exclude</span><span class=p>&lt;</span><span class=nt>string</span><span class=err>,</span> <span class=err>&#34;*&#34;</span><span class=p>&gt;[],</span>
 <span class=p>};</span>
 
 <span class=kr>class</span> <span class=nx>User</span>:
@@ -154,30 +155,22 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
 </div><p>Such safeguard prevents developers from basic mistakes that operations already identified as dangerous in production scenarios.</p>
 <h3 id=2-devs-have-to-abstract-performance-in-the-code>2. Devs have to abstract performance in the code</h3>
 <p>As we saw, the quest towards performance will force developers to complexify their code, leading to increased code complexity. So it is paramount to properly architect the code to foresee those changes and encapsulate this complexity outside of the business logic.</p>
-<p>For instance, if you manage items in an e-commerce setting, you probably want to avoid double-spending. Double-spending happens when one or more clients reach two times for the same product. A safeguard for this can be to manipulate lock entities on the product.</p>
+<p>For instance, if you manage items in an e-commerce setting, you probably want to avoid double-spending. Double-spending happens when one or more clients reach two times for the same product. A safeguard for this can be to manipulate lock entities on each product.</p>
 <div class=highlight><div class=chroma>
 <table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
+<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
 </span></code></pre></td>
 <td class=lntd>
 <pre tabindex=0 class=chroma><code class=language-typescript data-lang=typescript><span class=kr>class</span> <span class=nx>Lock</span> <span class=p>{</span>
-  <span class=kr>constructor</span><span class=p>(</span><span class=nx>id</span>: <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
-    <span class=k>this</span><span class=p>.</span><span class=nx>id</span> <span class=o>=</span> <span class=nx>id</span><span class=p>;</span>
-  <span class=p>}</span>
-
   <span class=nx>create</span> <span class=o>=</span> <span class=p>()</span> <span class=o>=&gt;</span> <span class=p>{</span>
-    <span class=nx>orm</span><span class=p>.</span><span class=nx>create</span><span class=p>(</span><span class=nx>id</span><span class=p>);</span>
+    <span class=nx>orm</span><span class=p>.</span><span class=nx>create</span><span class=p>(</span><span class=nx>uuid</span><span class=p>());</span>
   <span class=p>};</span>
 <span class=p>}</span>
 
@@ -194,12 +187,12 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
 </span></code></pre></td>
 <td class=lntd>
 <pre tabindex=0 class=chroma><code class=language-typescript data-lang=typescript><span class=nx>create</span> <span class=o>=</span> <span class=p>()</span> <span class=o>=&gt;</span> <span class=p>{</span>
-  <span class=nx>redis</span><span class=p>.</span><span class=nx>cache</span><span class=p>(</span><span class=nx>id</span><span class=p>);</span>
-<span class=p>};</span>
+  <span class=nx>redis</span><span class=p>.</span><span class=nx>cache</span><span class=p>(</span><span class=nx>id</span><span class=p>);</span> <span class=c1>// this line changed
+</span><span class=c1></span><span class=p>};</span>
 </code></pre></td></tr></table>
 </div>
 </div><p>will transparently change every occurrence of the code.</p>
-<p>I am not saying devs should over-factorize code. However, in cases that operations already pinpointed as critical from a performance perspective, extracting the logic from the code can be an appropriate option to iterate faster towards to best, most performant solution. Such patterns split the concerns between business-only and performance-only code.</p>
+<p>I am not saying devs should over-factorize code. However, in cases that operations already pinpointed as critical from a performance perspective, extracting the logic from the code can be an appropriate option to iterate faster towards to best, most performant solution. Such patterns split the concerns between business and performance logic.</p>
 <h1 id=conclusion>Conclusion</h1>
 <p>Thinking in terms of bias and variance is an interesting tool for product prioritization. Should you focus on reducing bias by producing more features or tackling variance by attacking technical debt? This is a question worth answering at every sprint, and it is a perpetual discussion to nurture between product, development, and operations.</p>
 <p>Anyway, DevOps is now so deeply rooted in our way of thinking that it&rsquo;s almost history. Now it&rsquo;s all about DevSecOps, and security also adds up entropy to already complex projects.</p>

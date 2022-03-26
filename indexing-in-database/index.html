@@ -1,61 +1,8 @@
-<!doctype html><html lang=en>
-<head>
-<meta charset=utf-8>
-<meta name=viewport content="width=device-width,initial-scale=1">
-<meta property="og:title" content="Database Indexes Explained to Software Developers">
-<meta property="og:description" content="A practical approach to database indexes with illustrations in Python.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://marcenacp.github.io/indexing-in-database/"><meta property="article:section" content>
-<meta property="article:published_time" content="2021-02-04T10:52:59+08:00">
-<meta property="article:modified_time" content="2021-02-04T10:52:59+08:00">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Database Indexes Explained to Software Developers">
-<meta name=twitter:description content="A practical approach to database indexes with illustrations in Python.">
-<meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff">
-<meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33">
-<title>
-Pierre Marcenac - Database Indexes Explained to Software Developers
-</title>
-<link rel="shortcut icon" href=/favicon.ico type=image/x-icon>
-<link rel=preconnect href=https://fonts.googleapis.com>
-<link rel=preconnect href=https://fonts.gstatic.com crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet>
-<link rel=stylesheet href=/minima.1645775828.css>
-<script defer type=text/javascript src=/minima.1645775828.js></script>
-</head>
-<script>let theme_2b_used=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';try{if(!('theme'in localStorage)){const a='system';(a==='dark'||a==='light')&&(theme_2b_used=a),localStorage.theme=theme_2b_used}document.querySelector('html').classList.add(localStorage.theme)}catch(a){console.error(a)}</script>
-<body class="sm:mx-5 sm:my-0">
-<header class="flex justify-between items-center mb-6 sm:my-3">
-<div class="flex items-center">
-<div id=theme-switcher class="text-4xl cursor-pointer">pierre.marcenac</div>
-</div>
-<nav class="flex items-center
-whitespace-nowrap overflow-x-auto overflow-y-hidden">
-<a class=ml-5 href=/>Home</a>
+<!doctype html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta property="og:title" content="Database Indexes Explained to Software Developers"><meta property="og:description" content="A practical approach to database indexes with illustrations in Python."><meta property="og:type" content="article"><meta property="og:url" content="https://marcenacp.github.io/indexing-in-database/"><meta property="article:section" content><meta property="article:published_time" content="2021-02-04T10:52:59+08:00"><meta property="article:modified_time" content="2021-02-04T10:52:59+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="Database Indexes Explained to Software Developers"><meta name=twitter:description content="A practical approach to database indexes with illustrations in Python."><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#262d33"><title>Pierre Marcenac - Database Indexes Explained to Software Developers</title><link rel="shortcut icon" href=/favicon.ico type=image/x-icon><link rel=preconnect href=https://fonts.googleapis.com><link rel=preconnect href=https://fonts.gstatic.com crossorigin><link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&display=swap" rel=stylesheet><link rel=stylesheet href=/minima.1648297723.css><script defer type=text/javascript src=/minima.1648297723.js></script></head><script>let theme_2b_used=window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";try{if(!("theme"in localStorage)){const e="system";(e==="dark"||e==="light")&&(theme_2b_used=e),localStorage.theme=theme_2b_used}document.querySelector("html").classList.add(localStorage.theme)}catch(e){console.error(e)}</script><body class="sm:mx-5 sm:my-0"><header class="flex justify-between items-center mb-6 sm:my-3"><div class="flex items-center"><div id=theme-switcher class="text-4xl cursor-pointer">pierre.marcenac</div></div><nav class="flex items-center
+whitespace-nowrap overflow-x-auto overflow-y-hidden"><a class=ml-5 href=/>Home</a>
 <a class=ml-5 href=/categories>Categories</a>
 <a class=ml-5 href=/series>Series</a>
-<a class=ml-5 href=/about>About</a>
-</nav>
-</header>
-<h1 class="mt-6 mb-6">Database Indexes Explained to Software Developers</h1>
-<div class="mb-3 text-xs flex justify-between sm:flex-col">
-<div>
-</div>
-</div>
-<main>
-<p>A practical approach to database indexes with illustrations in Python.</p>
-<article class=md>
-<blockquote>
-<p>&ldquo;You&rsquo;d better index your database!&rdquo;</p>
-<p>As a software engineer, you&rsquo;ve probably heard this sentence a few times. This blog post will guide you through understanding how indexing works.</p>
-<p>The code in this blog post executes by order of appearance. So I encourage you to follow along by copy/pasting it in a notebook. I used <code>Python 3.9</code>. You&rsquo;ll need the following dependencies: <code>pip install bplustree faker numpy tqdm</code>.</p>
-</blockquote>
-<hr>
-<h1 id=a-minimal-database-in-python>A minimal database in Python</h1>
-<p>First, we will need a minimal database in Python. The very minimal features of a database are 1) <code>append</code> a new record and 2) <code>read</code> from the database.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+<a class=ml-5 href=/about>About</a></nav></header><h1 class="mt-6 mb-6">Database Indexes Explained to Software Developers</h1><div class="mb-3 text-xs flex justify-between sm:flex-col"><div></div></div><main><p>A practical approach to database indexes with illustrations in Python.</p><article class=md><blockquote><p>&ldquo;You&rsquo;d better index your database!&rdquo;</p><p>As a software engineer, you&rsquo;ve probably heard this sentence a few times. This blog post will guide you through understanding how indexing works.</p><p>The code in this blog post executes by order of appearance. So I encourage you to follow along by copy/pasting it in a notebook. I used <code>Python 3.9</code>. You&rsquo;ll need the following dependencies: <code>pip install bplustree faker numpy tqdm</code>.</p></blockquote><hr><h1 id=a-minimal-database-in-python>A minimal database in Python</h1><p>First, we will need a minimal database in Python. The very minimal features of a database are 1) <code>append</code> a new record and 2) <code>read</code> from the database.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -69,28 +16,21 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
 </span><span class=lnt>12
 </span><span class=lnt>13
 </span><span class=lnt>14
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>import</span> <span class=nn>uuid</span>
-
-<span class=n>DATABASE</span> <span class=o>=</span> <span class=s1>&#39;./mini.db&#39;</span>
-<span class=n>NEW_LINE</span> <span class=o>=</span> <span class=s1>&#39;</span><span class=se>\n</span><span class=s1>&#39;</span>
-<span class=n>SEPARATOR</span> <span class=o>=</span> <span class=s1>&#39;,&#39;</span>
-
-<span class=k>def</span> <span class=nf>append</span><span class=p>(</span><span class=n>new_entry</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
-    <span class=nb>id</span> <span class=o>=</span> <span class=n>uuid</span><span class=o>.</span><span class=n>uuid4</span><span class=p>()</span>
-    <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>,</span> <span class=s1>&#39;a&#39;</span><span class=p>)</span> <span class=k>as</span> <span class=n>database</span><span class=p>:</span>
-        <span class=n>database</span><span class=o>.</span><span class=n>write</span><span class=p>(</span><span class=sa>f</span><span class=s1>&#39;</span><span class=si>{</span><span class=nb>id</span><span class=si>}{</span><span class=n>SEPARATOR</span><span class=si>}{</span><span class=n>new_entry</span><span class=si>}{</span><span class=n>NEW_LINE</span><span class=si>}</span><span class=s1>&#39;</span><span class=p>)</span>
-
-<span class=k>def</span> <span class=nf>read</span><span class=p>():</span>
-    <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>,</span> <span class=s1>&#39;r&#39;</span><span class=p>)</span> <span class=k>as</span> <span class=n>database</span><span class=p>:</span>
-        <span class=nb>print</span><span class=p>(</span><span class=n>database</span><span class=o>.</span><span class=n>read</span><span class=p>())</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>Let&rsquo;s try to write and read from this database:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>uuid</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>DATABASE</span> <span class=o>=</span> <span class=s1>&#39;./mini.db&#39;</span>
+</span></span><span class=line><span class=cl><span class=n>NEW_LINE</span> <span class=o>=</span> <span class=s1>&#39;</span><span class=se>\n</span><span class=s1>&#39;</span>
+</span></span><span class=line><span class=cl><span class=n>SEPARATOR</span> <span class=o>=</span> <span class=s1>&#39;,&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>append</span><span class=p>(</span><span class=n>new_entry</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=nb>id</span> <span class=o>=</span> <span class=n>uuid</span><span class=o>.</span><span class=n>uuid4</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>,</span> <span class=s1>&#39;a&#39;</span><span class=p>)</span> <span class=k>as</span> <span class=n>database</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>database</span><span class=o>.</span><span class=n>write</span><span class=p>(</span><span class=sa>f</span><span class=s1>&#39;</span><span class=si>{</span><span class=nb>id</span><span class=si>}{</span><span class=n>SEPARATOR</span><span class=si>}{</span><span class=n>new_entry</span><span class=si>}{</span><span class=n>NEW_LINE</span><span class=si>}</span><span class=s1>&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>read</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>,</span> <span class=s1>&#39;r&#39;</span><span class=p>)</span> <span class=k>as</span> <span class=n>database</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=nb>print</span><span class=p>(</span><span class=n>database</span><span class=o>.</span><span class=n>read</span><span class=p>())</span>
+</span></span></code></pre></td></tr></table></div></div><p>Let&rsquo;s try to write and read from this database:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -98,23 +38,15 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
 </span><span class=lnt>6
 </span><span class=lnt>7
 </span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>append</span><span class=p>(</span><span class=s1>&#39;foo&#39;</span><span class=p>)</span>
-<span class=n>read</span><span class=p>()</span>
-<span class=c1># b680ec59-c54b-4040-a16d-be6768db3b2c,foo</span>
-
-<span class=n>append</span><span class=p>(</span><span class=s1>&#39;bar&#39;</span><span class=p>)</span>
-<span class=n>read</span><span class=p>()</span>
-<span class=c1># b680ec59-c54b-4040-a16d-be6768db3b2c,foo</span>
-<span class=c1># d1bff2bd-b8b5-4b7f-9063-7d856d22794f,bar</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>Records pile up with a unique identifier (UUID) and the input name. So we just built a table with two columns: <code>UUID</code> and <code>Name</code>!</p>
-<p>Using <a href=https://github.com/joke2k/faker><code>Faker</code></a>, we can even populate the newly created database with fake names.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>append</span><span class=p>(</span><span class=s1>&#39;foo&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>read</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=c1># b680ec59-c54b-4040-a16d-be6768db3b2c,foo</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>append</span><span class=p>(</span><span class=s1>&#39;bar&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>read</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=c1># b680ec59-c54b-4040-a16d-be6768db3b2c,foo</span>
+</span></span><span class=line><span class=cl><span class=c1># d1bff2bd-b8b5-4b7f-9063-7d856d22794f,bar</span>
+</span></span></code></pre></td></tr></table></div></div><p>Records pile up with a unique identifier (UUID) and the input name. So we just built a table with two columns: <code>UUID</code> and <code>Name</code>!</p><p>Using <a href=https://github.com/joke2k/faker><code>Faker</code></a>, we can even populate the newly created database with fake names.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -127,38 +59,24 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
 </span><span class=lnt>11
 </span><span class=lnt>12
 </span><span class=lnt>13
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>faker</span> <span class=kn>import</span> <span class=n>Faker</span>
-<span class=kn>from</span> <span class=nn>tqdm</span> <span class=kn>import</span> <span class=n>tqdm</span>
-
-<span class=n>NUMBER_OF_LINES</span> <span class=o>=</span> <span class=mi>1000000</span>
-
-<span class=n>fake</span> <span class=o>=</span> <span class=n>Faker</span><span class=p>()</span>
-
-<span class=k>def</span> <span class=nf>seed</span><span class=p>():</span>
-    <span class=k>for</span> <span class=n>_</span> <span class=ow>in</span> <span class=n>tqdm</span><span class=p>(</span><span class=nb>range</span><span class=p>(</span><span class=n>NUMBER_OF_LINES</span><span class=p>)):</span>
-        <span class=n>append</span><span class=p>(</span><span class=n>fake</span><span class=o>.</span><span class=n>name</span><span class=p>())</span>
-
-<span class=n>seed</span><span class=p>()</span>
-<span class=c1># 100%|██████████| 10000000/10000000 [30:58&lt;00:00, 5381.77it/s]</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>The created database weighs approximately 489 MiB. Can we call this big data already? 😉</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>faker</span> <span class=kn>import</span> <span class=n>Faker</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>tqdm</span> <span class=kn>import</span> <span class=n>tqdm</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>NUMBER_OF_LINES</span> <span class=o>=</span> <span class=mi>1000000</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>fake</span> <span class=o>=</span> <span class=n>Faker</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>seed</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>for</span> <span class=n>_</span> <span class=ow>in</span> <span class=n>tqdm</span><span class=p>(</span><span class=nb>range</span><span class=p>(</span><span class=n>NUMBER_OF_LINES</span><span class=p>)):</span>
+</span></span><span class=line><span class=cl>        <span class=n>append</span><span class=p>(</span><span class=n>fake</span><span class=o>.</span><span class=n>name</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>seed</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=c1># 100%|██████████| 10000000/10000000 [30:58&lt;00:00, 5381.77it/s]</span>
+</span></span></code></pre></td></tr></table></div></div><p>The created database weighs approximately 489 MiB. Can we call this big data already? 😉</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>▶ ls mini.db
-  rw-r--r--   <span class=m>1</span>   pierre   staff     <span class=m>489</span> MiB   mini.db
-</code></pre></td></tr></table>
-</div>
-</div><p>We can choose a random row that we will use throughout the example.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>▶ ls mini.db
+</span></span><span class=line><span class=cl>  rw-r--r--   <span class=m>1</span>   pierre   staff     <span class=m>489</span> MiB   mini.db
+</span></span></code></pre></td></tr></table></div></div><p>We can choose a random row that we will use throughout the example.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -177,37 +95,26 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
 </span><span class=lnt>17
 </span><span class=lnt>18
 </span><span class=lnt>19
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>import</span> <span class=nn>random</span>
-
-<span class=k>def</span> <span class=nf>read_columns</span><span class=p>(</span><span class=n>line</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
-    <span class=k>return</span> <span class=n>line</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=n>SEPARATOR</span><span class=p>)</span>
-
-<span class=k>def</span> <span class=nf>read_name</span><span class=p>(</span><span class=n>columns</span><span class=p>):</span>
-    <span class=k>return</span> <span class=n>columns</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span><span class=o>.</span><span class=n>replace</span><span class=p>(</span><span class=n>NEW_LINE</span><span class=p>,</span> <span class=s1>&#39;&#39;</span><span class=p>)</span>
-
-<span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>)</span> <span class=k>as</span> <span class=n>database</span><span class=p>:</span>
-    <span class=n>lines</span> <span class=o>=</span> <span class=n>database</span><span class=o>.</span><span class=n>read</span><span class=p>()</span><span class=o>.</span><span class=n>splitlines</span><span class=p>()</span>
-    <span class=n>random_line</span> <span class=o>=</span> <span class=n>random</span><span class=o>.</span><span class=n>choice</span><span class=p>(</span><span class=n>lines</span><span class=p>)</span>
-    <span class=n>columns</span> <span class=o>=</span> <span class=n>read_columns</span><span class=p>(</span><span class=n>random_line</span><span class=p>)</span>
-
-    <span class=n>RANDOM_ID</span> <span class=o>=</span> <span class=n>columns</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
-    <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;This is a random line from our database:&#39;</span><span class=p>)</span>
-    <span class=nb>print</span><span class=p>(</span><span class=n>random_line</span><span class=p>)</span>
-
-<span class=c1># This is a random line from our database:</span>
-<span class=c1># 5ca59471-a19b-4996-9c80-6b9379afae13,Bobby Stuart</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>Hello, Mr. Stuart! The goal of this article will be to retrieve the record <code>RANDOM_ID</code> (aka <code>Bobby Stuart</code>) using different techniques. To benchmark all these techniques, a Python decorator keeps track of time. The following decorator takes care of:</p>
-<ul>
-<li>calling the functions ten times to make sure we average the execution time on several calls to be statistically pertinent;</li>
-<li>computing the mean execution time and printing it back to the user.</li>
-</ul>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>random</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>read_columns</span><span class=p>(</span><span class=n>line</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>line</span><span class=o>.</span><span class=n>split</span><span class=p>(</span><span class=n>SEPARATOR</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>read_name</span><span class=p>(</span><span class=n>columns</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>columns</span><span class=p>[</span><span class=mi>1</span><span class=p>]</span><span class=o>.</span><span class=n>replace</span><span class=p>(</span><span class=n>NEW_LINE</span><span class=p>,</span> <span class=s1>&#39;&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>)</span> <span class=k>as</span> <span class=n>database</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>    <span class=n>lines</span> <span class=o>=</span> <span class=n>database</span><span class=o>.</span><span class=n>read</span><span class=p>()</span><span class=o>.</span><span class=n>splitlines</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>    <span class=n>random_line</span> <span class=o>=</span> <span class=n>random</span><span class=o>.</span><span class=n>choice</span><span class=p>(</span><span class=n>lines</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=n>columns</span> <span class=o>=</span> <span class=n>read_columns</span><span class=p>(</span><span class=n>random_line</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=n>RANDOM_ID</span> <span class=o>=</span> <span class=n>columns</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=s1>&#39;This is a random line from our database:&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>    <span class=nb>print</span><span class=p>(</span><span class=n>random_line</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># This is a random line from our database:</span>
+</span></span><span class=line><span class=cl><span class=c1># 5ca59471-a19b-4996-9c80-6b9379afae13,Bobby Stuart</span>
+</span></span></code></pre></td></tr></table></div></div><p>Hello, Mr. Stuart! The goal of this article will be to retrieve the record <code>RANDOM_ID</code> (aka <code>Bobby Stuart</code>) using different techniques. To benchmark all these techniques, a Python decorator keeps track of time. The following decorator takes care of:</p><ul><li>calling the functions ten times to make sure we average the execution time on several calls to be statistically pertinent;</li><li>computing the mean execution time and printing it back to the user.</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -229,38 +136,29 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
 </span><span class=lnt>20
 </span><span class=lnt>21
 </span><span class=lnt>22
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>functools</span> <span class=kn>import</span> <span class=n>wraps</span>
-<span class=kn>import</span> <span class=nn>numpy</span> <span class=k>as</span> <span class=nn>np</span>
-<span class=kn>from</span> <span class=nn>time</span> <span class=kn>import</span> <span class=n>time</span>
-
-<span class=n>ITERATIONS</span> <span class=o>=</span> <span class=mi>10</span>
-
-<span class=k>def</span> <span class=nf>time_tracker</span><span class=p>():</span>
-    <span class=k>def</span> <span class=nf>_time_tracker</span><span class=p>(</span><span class=n>fn</span><span class=p>):</span>
-        <span class=nd>@wraps</span><span class=p>(</span><span class=n>fn</span><span class=p>)</span>
-        <span class=k>def</span> <span class=nf>wrapped_fn</span><span class=p>(</span><span class=o>*</span><span class=n>args</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>):</span>
-            <span class=n>elapsed_times</span> <span class=o>=</span> <span class=p>[]</span>
-
-            <span class=k>for</span> <span class=n>_</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>ITERATIONS</span><span class=p>):</span>
-                <span class=n>start_time</span> <span class=o>=</span> <span class=n>time</span><span class=p>()</span>
-                <span class=n>result</span> <span class=o>=</span> <span class=n>fn</span><span class=p>(</span><span class=o>*</span><span class=n>args</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>)</span>
-                <span class=n>elapsed_time</span> <span class=o>=</span> <span class=n>time</span><span class=p>()</span> <span class=o>-</span> <span class=n>start_time</span>
-                <span class=n>elapsed_times</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>elapsed_time</span><span class=p>)</span>
-            <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s1>&#39;</span><span class=si>{</span><span class=n>fn</span><span class=o>.</span><span class=vm>__name__</span><span class=si>:</span><span class=s1>20</span><span class=si>}</span><span class=s1> </span><span class=si>{</span><span class=n>np</span><span class=o>.</span><span class=n>mean</span><span class=p>(</span><span class=n>elapsed_times</span><span class=p>)</span><span class=si>:</span><span class=s1>.6f</span><span class=si>}</span><span class=s1> seconds&#39;</span><span class=p>)</span>
-            <span class=k>return</span> <span class=n>result</span>
-
-        <span class=k>return</span> <span class=n>wrapped_fn</span>
-    <span class=k>return</span> <span class=n>_time_tracker</span>
-</code></pre></td></tr></table>
-</div>
-</div><hr>
-<h1 id=table-scan>Table scan</h1>
-<p>The most obvious technique to retrieve a record is to scan the whole table going through all rows until we reach Bobby:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>functools</span> <span class=kn>import</span> <span class=n>wraps</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=nn>numpy</span> <span class=k>as</span> <span class=nn>np</span>
+</span></span><span class=line><span class=cl><span class=kn>from</span> <span class=nn>time</span> <span class=kn>import</span> <span class=n>time</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>ITERATIONS</span> <span class=o>=</span> <span class=mi>10</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>time_tracker</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>def</span> <span class=nf>_time_tracker</span><span class=p>(</span><span class=n>fn</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>        <span class=nd>@wraps</span><span class=p>(</span><span class=n>fn</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>def</span> <span class=nf>wrapped_fn</span><span class=p>(</span><span class=o>*</span><span class=n>args</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=n>elapsed_times</span> <span class=o>=</span> <span class=p>[]</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>            <span class=k>for</span> <span class=n>_</span> <span class=ow>in</span> <span class=nb>range</span><span class=p>(</span><span class=n>ITERATIONS</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>                <span class=n>start_time</span> <span class=o>=</span> <span class=n>time</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>                <span class=n>result</span> <span class=o>=</span> <span class=n>fn</span><span class=p>(</span><span class=o>*</span><span class=n>args</span><span class=p>,</span> <span class=o>**</span><span class=n>kwargs</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>                <span class=n>elapsed_time</span> <span class=o>=</span> <span class=n>time</span><span class=p>()</span> <span class=o>-</span> <span class=n>start_time</span>
+</span></span><span class=line><span class=cl>                <span class=n>elapsed_times</span><span class=o>.</span><span class=n>append</span><span class=p>(</span><span class=n>elapsed_time</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=nb>print</span><span class=p>(</span><span class=sa>f</span><span class=s1>&#39;</span><span class=si>{</span><span class=n>fn</span><span class=o>.</span><span class=vm>__name__</span><span class=si>:</span><span class=s1>20</span><span class=si>}</span><span class=s1> </span><span class=si>{</span><span class=n>np</span><span class=o>.</span><span class=n>mean</span><span class=p>(</span><span class=n>elapsed_times</span><span class=p>)</span><span class=si>:</span><span class=s1>.6f</span><span class=si>}</span><span class=s1> seconds&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span> <span class=n>result</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=n>wrapped_fn</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>_time_tracker</span>
+</span></span></code></pre></td></tr></table></div></div><hr><h1 id=table-scan>Table scan</h1><p>The most obvious technique to retrieve a record is to scan the whole table going through all rows until we reach Bobby:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -268,49 +166,25 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
 </span><span class=lnt>6
 </span><span class=lnt>7
 </span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=nd>@time_tracker</span><span class=p>()</span>
-<span class=k>def</span> <span class=nf>find</span><span class=p>(</span><span class=nb>id</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
-    <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>,</span> <span class=s1>&#39;r&#39;</span><span class=p>)</span> <span class=k>as</span> <span class=n>database</span><span class=p>:</span>
-        <span class=k>for</span> <span class=n>line</span> <span class=ow>in</span> <span class=n>database</span><span class=p>:</span>
-            <span class=n>columns</span> <span class=o>=</span> <span class=n>read_columns</span><span class=p>(</span><span class=n>line</span><span class=p>)</span>
-            <span class=k>if</span> <span class=n>columns</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=nb>id</span><span class=p>:</span>
-                <span class=k>return</span> <span class=n>read_name</span><span class=p>(</span><span class=n>columns</span><span class=p>)</span>
-        <span class=k>return</span> <span class=kc>None</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>Scanning the whole database took quite a while:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=nd>@time_tracker</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>find</span><span class=p>(</span><span class=nb>id</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>,</span> <span class=s1>&#39;r&#39;</span><span class=p>)</span> <span class=k>as</span> <span class=n>database</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>line</span> <span class=ow>in</span> <span class=n>database</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>columns</span> <span class=o>=</span> <span class=n>read_columns</span><span class=p>(</span><span class=n>line</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=n>columns</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=o>==</span> <span class=nb>id</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span> <span class=n>read_name</span><span class=p>(</span><span class=n>columns</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=kc>None</span>
+</span></span></code></pre></td></tr></table></div></div><p>Scanning the whole database took quite a while:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>name</span> <span class=o>=</span> <span class=n>find</span><span class=p>(</span><span class=n>RANDOM_ID</span><span class=p>)</span>
-<span class=nb>print</span><span class=p>(</span><span class=n>name</span><span class=p>)</span>
-
-<span class=c1># find                 1.380667 seconds</span>
-<span class=c1># Bobby Stuart</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>The cost of this lookup is linear in the size of the database, which is computationally not acceptable in the era of big data. We call this algorithmic complexity <code>O(n)</code> where <code>n</code> is the number of rows in the database.</p>
-<p>Now imagine our database was a bit more complex. For example, <code>persons</code> may have many <code>addresses</code>. If you are retrieving the address of a particular person, you&rsquo;d have to look through all addresses of all persons (<code>O(n x m)</code>).</p>
-<p>So, looking up a record on a big table is not an ordinary operation. Joining tables amplifies the problem. That&rsquo;s where indexes come to play.</p>
-<hr>
-<h1 id=hash-indexes>Hash indexes</h1>
-<p>You have already used indexes in books:</p>
-<p><img src=/index-book.jpeg alt=Image></p>
-<p>In the above example, you&rsquo;ll be able to check all information related to <code>EventSource</code> on page 512.</p>
-<p>We could design an index in a very similar way, <em>i.e.</em> have an external index keeping track of the position of each row. We will store this information in RAM as a Python dictionary called <code>HASH</code>. Retrieving a record:</p>
-<p><img src=/index-hash.png alt=Image></p>
-<p>The keys of <code>HASH</code> are UUIDs of all records in the database. Its values are the corresponding row number.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>name</span> <span class=o>=</span> <span class=n>find</span><span class=p>(</span><span class=n>RANDOM_ID</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>name</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># find                 1.380667 seconds</span>
+</span></span><span class=line><span class=cl><span class=c1># Bobby Stuart</span>
+</span></span></code></pre></td></tr></table></div></div><p>The cost of this lookup is linear in the size of the database, which is computationally not acceptable in the era of big data. We call this algorithmic complexity <code>O(n)</code> where <code>n</code> is the number of rows in the database.</p><p>Now imagine our database was a bit more complex. For example, <code>persons</code> may have many <code>addresses</code>. If you are retrieving the address of a particular person, you&rsquo;d have to look through all addresses of all persons (<code>O(n x m)</code>).</p><p>So, looking up a record on a big table is not an ordinary operation. Joining tables amplifies the problem. That&rsquo;s where indexes come to play.</p><hr><h1 id=hash-indexes>Hash indexes</h1><p>You have already used indexes in books:</p><p><img src=/index-book.jpeg alt=Image></p><p>In the above example, you&rsquo;ll be able to check all information related to <code>EventSource</code> on page 512.</p><p>We could design an index in a very similar way, <em>i.e.</em> have an external index keeping track of the position of each row. We will store this information in RAM as a Python dictionary called <code>HASH</code>. Retrieving a record:</p><p><img src=/index-hash.png alt=Image></p><p>The keys of <code>HASH</code> are UUIDs of all records in the database. Its values are the corresponding row number.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
@@ -318,104 +192,56 @@ whitespace-nowrap overflow-x-auto overflow-y-hidden">
 </span><span class=lnt>6
 </span><span class=lnt>7
 </span><span class=lnt>8
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>HASH</span> <span class=o>=</span> <span class=p>{}</span>
-
-<span class=nd>@time_tracker</span><span class=p>()</span>
-<span class=k>def</span> <span class=nf>index_hash</span><span class=p>():</span>
-    <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>,</span> <span class=s1>&#39;r&#39;</span><span class=p>)</span> <span class=k>as</span> <span class=n>database</span><span class=p>:</span>
-        <span class=k>for</span> <span class=n>line_number</span><span class=p>,</span> <span class=n>line</span> <span class=ow>in</span> <span class=nb>enumerate</span><span class=p>(</span><span class=n>database</span><span class=p>):</span>
-            <span class=n>columns</span> <span class=o>=</span> <span class=n>read_columns</span><span class=p>(</span><span class=n>line</span><span class=p>)</span>
-            <span class=n>HASH</span><span class=p>[</span><span class=n>columns</span><span class=p>[</span><span class=mi>0</span><span class=p>]]</span> <span class=o>=</span> <span class=n>line_number</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>So <code>HASH</code> looks like this:</p>
-<pre tabindex=0><code>{
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>HASH</span> <span class=o>=</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nd>@time_tracker</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>index_hash</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>,</span> <span class=s1>&#39;r&#39;</span><span class=p>)</span> <span class=k>as</span> <span class=n>database</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>line_number</span><span class=p>,</span> <span class=n>line</span> <span class=ow>in</span> <span class=nb>enumerate</span><span class=p>(</span><span class=n>database</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=n>columns</span> <span class=o>=</span> <span class=n>read_columns</span><span class=p>(</span><span class=n>line</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>HASH</span><span class=p>[</span><span class=n>columns</span><span class=p>[</span><span class=mi>0</span><span class=p>]]</span> <span class=o>=</span> <span class=n>line_number</span>
+</span></span></code></pre></td></tr></table></div></div><p>So <code>HASH</code> looks like this:</p><pre tabindex=0><code>{
     ...
-    &quot;5ca59471-a19b-4996-9c80-6b9379afae13&quot;: 872363,
+    &#34;5ca59471-a19b-4996-9c80-6b9379afae13&#34;: 872363,
     ...
 }
-</code></pre><p>where <code>872363</code> is the row number corresponding to <code>Bobby Stuart</code> in the file <code>mini.db</code>.</p>
-<p>Given a UUID, retrieving a record is now pretty trivial. I use <code>HASH</code> to see the corresponding row number in the database, then I use <a href=https://docs.python.org/3/library/linecache.html><code>linecache</code></a> to get the record.</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</code></pre><p>where <code>872363</code> is the row number corresponding to <code>Bobby Stuart</code> in the file <code>mini.db</code>.</p><p>Given a UUID, retrieving a record is now pretty trivial. I use <code>HASH</code> to see the corresponding row number in the database, then I use <a href=https://docs.python.org/3/library/linecache.html><code>linecache</code></a> to get the record.</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>import</span> <span class=nn>linecache</span>
-
-<span class=nd>@time_tracker</span><span class=p>()</span>
-<span class=k>def</span> <span class=nf>find</span><span class=p>(</span><span class=nb>id</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
-    <span class=n>line_number</span> <span class=o>=</span> <span class=n>HASH</span><span class=p>[</span><span class=nb>id</span><span class=p>]</span>
-    <span class=k>return</span> <span class=n>linecache</span><span class=o>.</span><span class=n>getline</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>,</span> <span class=n>line_number</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>Let&rsquo;s launch this:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>import</span> <span class=nn>linecache</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nd>@time_tracker</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>find</span><span class=p>(</span><span class=nb>id</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=n>line_number</span> <span class=o>=</span> <span class=n>HASH</span><span class=p>[</span><span class=nb>id</span><span class=p>]</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>linecache</span><span class=o>.</span><span class=n>getline</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>,</span> <span class=n>line_number</span> <span class=o>+</span> <span class=mi>1</span><span class=p>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>Let&rsquo;s launch this:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>index_hash</span><span class=p>()</span>
-<span class=n>name</span> <span class=o>=</span> <span class=n>find</span><span class=p>(</span><span class=n>RANDOM_ID</span><span class=p>)</span>
-<span class=nb>print</span><span class=p>(</span><span class=n>name</span><span class=p>)</span>
-
-<span class=c1># index_hash           6.261488 seconds</span>
-<span class=c1># find                 0.113469 seconds</span>
-<span class=c1># b4ff2b36-7a4f-45d6-b095-45701cad777b,Bobby Stuart</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>We say the time complexity is <code>O(1)</code> because we access records in constant time.</p>
-<p>However, this indexing technique requires having the whole database in memory, which is not suitable for big data. Moreover, it only works for exact matching. Trying to retrieve all the records with a name that begins by <code>Bobby</code> would no longer be optimal with this technique.</p>
-<blockquote>
-<p><strong>Hash indexes</strong></p>
-<p>✅ <strong>Advantages</strong></p>
-<ul>
-<li>Easy</li>
-<li>Blazing fast (<code>O(1)</code>)</li>
-</ul>
-<p>❌ <strong>Drawbacks</strong></p>
-<ul>
-<li>Only works for exact matching</li>
-<li>In-memory</li>
-</ul>
-</blockquote>
-<hr>
-<h1 id=binary-trees>Binary trees</h1>
-<p>Hash indexes have too many drawbacks. That&rsquo;s where binary trees (aka B-trees) come into play.</p>
-<p>B-trees are a way to order data so that search, insertion, and deletion are easy. Searching a record through a B-tree looks like this:</p>
-<p><img src=/index-btree.png alt=B-tree></p>
-<p>If the tree is balanced (<em>i.e.</em> all branches have the same number of nodes and leaves), we see that, at each node, you get to cut the remaining records to look for by half. So the maximal number of operations when looking up a record (or time complexity $C_n$) equals the tree height. Now, given there are <code>n</code> records in the database:</p>
-<p>$$
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>index_hash</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>name</span> <span class=o>=</span> <span class=n>find</span><span class=p>(</span><span class=n>RANDOM_ID</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>name</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># index_hash           6.261488 seconds</span>
+</span></span><span class=line><span class=cl><span class=c1># find                 0.113469 seconds</span>
+</span></span><span class=line><span class=cl><span class=c1># b4ff2b36-7a4f-45d6-b095-45701cad777b,Bobby Stuart</span>
+</span></span></code></pre></td></tr></table></div></div><p>We say the time complexity is <code>O(1)</code> because we access records in constant time.</p><p>However, this indexing technique requires having the whole database in memory, which is not suitable for big data. Moreover, it only works for exact matching. Trying to retrieve all the records with a name that begins by <code>Bobby</code> would no longer be optimal with this technique.</p><blockquote><p><strong>Hash indexes</strong></p><p>✅ <strong>Advantages</strong></p><ul><li>Easy</li><li>Blazing fast (<code>O(1)</code>)</li></ul><p>❌ <strong>Drawbacks</strong></p><ul><li>Only works for exact matching</li><li>In-memory</li></ul></blockquote><hr><h1 id=binary-trees>Binary trees</h1><p>Hash indexes have too many drawbacks. That&rsquo;s where binary trees (aka B-trees) come into play.</p><p>B-trees are a way to order data so that search, insertion, and deletion are easy. Searching a record through a B-tree looks like this:</p><p><img src=/index-btree.png alt=B-tree></p><p>If the tree is balanced (<em>i.e.</em> all branches have the same number of nodes and leaves), we see that, at each node, you get to cut the remaining records to look for by half. So the maximal number of operations when looking up a record (or time complexity $C_n$) equals the tree height. Now, given there are <code>n</code> records in the database:</p><p>$$
 \begin{align*}
 C_{n+1} & = 2 \times C_{n} \\\
 n & \approx 2^{h}
 \end{align*}
-$$</p>
-<p>So the complexity writes as:</p>
-<p>$$
+$$</p><p>So the complexity writes as:</p><p>$$
 \begin{align*}
 C_n \times \ln(2) & = \ln(n) \\\
 C_n & = \log_2(n)
 \end{align*}
-$$</p>
-<p>The time complexity is <code>O(log(n))</code>.</p>
-<p>I used <a href=https://github.com/NicolasLM/bplustree><code>bplustree</code></a> to manipulate disk-persisted trees in Python. We build the B-tree index and use it in a few lines:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt> 1
+$$</p><p>The time complexity is <code>O(log(n))</code>.</p><p>I used <a href=https://github.com/NicolasLM/bplustree><code>bplustree</code></a> to manipulate disk-persisted trees in Python. We build the B-tree index and use it in a few lines:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
 </span><span class=lnt> 4
@@ -428,166 +254,73 @@ $$</p>
 </span><span class=lnt>11
 </span><span class=lnt>12
 </span><span class=lnt>13
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=kn>from</span> <span class=nn>bplustree</span> <span class=kn>import</span> <span class=n>BPlusTree</span><span class=p>,</span> <span class=n>UUIDSerializer</span>
-
-<span class=n>TREE</span> <span class=o>=</span> <span class=n>BPlusTree</span><span class=p>(</span><span class=sa>f</span><span class=s1>&#39;./tree-</span><span class=si>{</span><span class=n>random</span><span class=o>.</span><span class=n>random</span><span class=p>()</span><span class=si>}</span><span class=s1>.index&#39;</span><span class=p>,</span> <span class=n>serializer</span><span class=o>=</span><span class=n>UUIDSerializer</span><span class=p>(),</span> <span class=n>key_size</span><span class=o>=</span><span class=mi>16</span><span class=p>,</span> <span class=n>page_size</span><span class=o>=</span><span class=mi>10000</span><span class=p>)</span>
-
-<span class=k>def</span> <span class=nf>index_btree</span><span class=p>():</span>
-    <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>,</span> <span class=s1>&#39;r&#39;</span><span class=p>)</span> <span class=k>as</span> <span class=n>database</span><span class=p>:</span>
-        <span class=k>for</span> <span class=n>line_number</span><span class=p>,</span> <span class=n>line</span> <span class=ow>in</span> <span class=n>tqdm</span><span class=p>(</span><span class=nb>enumerate</span><span class=p>(</span><span class=n>database</span><span class=p>),</span> <span class=n>NUMBER_OF_LINES</span><span class=o>=</span><span class=n>NUMBER_OF_LINES</span><span class=p>):</span>
-            <span class=n>columns</span> <span class=o>=</span> <span class=n>read_columns</span><span class=p>(</span><span class=n>line</span><span class=p>)</span>
-            <span class=n>TREE</span><span class=o>.</span><span class=n>insert</span><span class=p>(</span><span class=n>uuid</span><span class=o>.</span><span class=n>UUID</span><span class=p>(</span><span class=n>columns</span><span class=p>[</span><span class=mi>0</span><span class=p>]),</span> <span class=n>line</span><span class=o>.</span><span class=n>encode</span><span class=p>())</span>
-
-<span class=nd>@time_tracker</span><span class=p>()</span>
-<span class=k>def</span> <span class=nf>find</span><span class=p>(</span><span class=nb>id</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
-    <span class=k>return</span> <span class=n>TREE</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=n>uuid</span><span class=o>.</span><span class=n>UUID</span><span class=p>(</span><span class=nb>id</span><span class=p>))</span><span class=o>.</span><span class=n>decode</span><span class=p>()</span>
-</code></pre></td></tr></table>
-</div>
-</div><div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=kn>from</span> <span class=nn>bplustree</span> <span class=kn>import</span> <span class=n>BPlusTree</span><span class=p>,</span> <span class=n>UUIDSerializer</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>TREE</span> <span class=o>=</span> <span class=n>BPlusTree</span><span class=p>(</span><span class=sa>f</span><span class=s1>&#39;./tree-</span><span class=si>{</span><span class=n>random</span><span class=o>.</span><span class=n>random</span><span class=p>()</span><span class=si>}</span><span class=s1>.index&#39;</span><span class=p>,</span> <span class=n>serializer</span><span class=o>=</span><span class=n>UUIDSerializer</span><span class=p>(),</span> <span class=n>key_size</span><span class=o>=</span><span class=mi>16</span><span class=p>,</span> <span class=n>page_size</span><span class=o>=</span><span class=mi>10000</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>index_btree</span><span class=p>():</span>
+</span></span><span class=line><span class=cl>    <span class=k>with</span> <span class=nb>open</span><span class=p>(</span><span class=n>DATABASE</span><span class=p>,</span> <span class=s1>&#39;r&#39;</span><span class=p>)</span> <span class=k>as</span> <span class=n>database</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>for</span> <span class=n>line_number</span><span class=p>,</span> <span class=n>line</span> <span class=ow>in</span> <span class=n>tqdm</span><span class=p>(</span><span class=nb>enumerate</span><span class=p>(</span><span class=n>database</span><span class=p>),</span> <span class=n>NUMBER_OF_LINES</span><span class=o>=</span><span class=n>NUMBER_OF_LINES</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>            <span class=n>columns</span> <span class=o>=</span> <span class=n>read_columns</span><span class=p>(</span><span class=n>line</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>            <span class=n>TREE</span><span class=o>.</span><span class=n>insert</span><span class=p>(</span><span class=n>uuid</span><span class=o>.</span><span class=n>UUID</span><span class=p>(</span><span class=n>columns</span><span class=p>[</span><span class=mi>0</span><span class=p>]),</span> <span class=n>line</span><span class=o>.</span><span class=n>encode</span><span class=p>())</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nd>@time_tracker</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=k>def</span> <span class=nf>find</span><span class=p>(</span><span class=nb>id</span><span class=p>:</span> <span class=nb>str</span><span class=p>):</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=n>TREE</span><span class=o>.</span><span class=n>get</span><span class=p>(</span><span class=n>uuid</span><span class=o>.</span><span class=n>UUID</span><span class=p>(</span><span class=nb>id</span><span class=p>))</span><span class=o>.</span><span class=n>decode</span><span class=p>()</span>
+</span></span></code></pre></td></tr></table></div></div><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=n>index_btree</span><span class=p>()</span>
-<span class=n>name</span> <span class=o>=</span> <span class=n>find</span><span class=p>(</span><span class=n>RANDOM_ID</span><span class=p>)</span>
-<span class=nb>print</span><span class=p>(</span><span class=n>name</span><span class=p>)</span>
-
-<span class=c1># find                 0.000467 seconds</span>
-<span class=c1># b4ff2b36-7a4f-45d6-b095-45701cad777b,Bobby Stuart</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>When computing the complexity, we saw it is primordial to keep the B-tree perfectly balanced. When inserting a new record, this may require splitting pages.</p>
-<blockquote>
-<p><strong>B-trees indexes</strong></p>
-<p>✅ <strong>Advantages</strong></p>
-<ul>
-<li>Works in any metric space for huge amounts of data</li>
-<li>Blazing fast</li>
-</ul>
-<p>❌ <strong>Drawbacks</strong></p>
-<ul>
-<li>Um, this is probably the most-used type of index&mldr;</li>
-</ul>
-</blockquote>
-<hr>
-<h1 id=gin-indexes>GIN indexes</h1>
-<p>Real-life data is much more complex and structured than simple strings. For instance, to describe the current blog article, I could use the following JSON structures:</p>
-<pre tabindex=0><code>{
-    &quot;title&quot;: &quot;Database Indexes&quot;,
-    &quot;tags&quot;: [&quot;database&quot;, &quot;postgresql&quot;]
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-python data-lang=python><span class=line><span class=cl><span class=n>index_btree</span><span class=p>()</span>
+</span></span><span class=line><span class=cl><span class=n>name</span> <span class=o>=</span> <span class=n>find</span><span class=p>(</span><span class=n>RANDOM_ID</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=nb>print</span><span class=p>(</span><span class=n>name</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1># find                 0.000467 seconds</span>
+</span></span><span class=line><span class=cl><span class=c1># b4ff2b36-7a4f-45d6-b095-45701cad777b,Bobby Stuart</span>
+</span></span></code></pre></td></tr></table></div></div><p>When computing the complexity, we saw it is primordial to keep the B-tree perfectly balanced. When inserting a new record, this may require splitting pages.</p><blockquote><p><strong>B-trees indexes</strong></p><p>✅ <strong>Advantages</strong></p><ul><li>Works in any metric space for huge amounts of data</li><li>Blazing fast</li></ul><p>❌ <strong>Drawbacks</strong></p><ul><li>Um, this is probably the most-used type of index&mldr;</li></ul></blockquote><hr><h1 id=gin-indexes>GIN indexes</h1><p>Real-life data is much more complex and structured than simple strings. For instance, to describe the current blog article, I could use the following JSON structures:</p><pre tabindex=0><code>{
+    &#34;title&#34;: &#34;Database Indexes&#34;,
+    &#34;tags&#34;: [&#34;database&#34;, &#34;postgresql&#34;]
 }
-</code></pre><p>Most mainstream databases implement JSON support (JSONB in PostgreSQL, JSON in MySQL, BSON documents in MongoDB). This kind of data is harder to index than regular strings/numbers.</p>
-<p>When scanning structured data, you&rsquo;d likely be interested in:</p>
-<ul>
-<li>knowing whether an element belongs to an array (<code>"postgresql" IN 'tags'</code>)</li>
-<li>finding patterns with regular expressions (<code>'text' match "*indexes*"</code>)</li>
-<li>identifying lexemes in documents (<code>"explain" in 'text'</code>, <code>tsvector</code> in PostgreSQL)</li>
-</ul>
-<p>For instance, if a database contains variations of a word: <code>identification</code>, <code>identifying</code>, <code>identified</code>, etc, when looking for <code>identify</code>, I would like to retrieve all the previous documents. Generalized Inverted Indexes (GIN) allow handling such composite data.</p>
-<hr>
-<h1 id=real-life>Real life</h1>
-<p>Let&rsquo;s pop up a dockerized instance of PostgreSQL in the same directory where you created the data:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</code></pre><p>Most mainstream databases implement JSON support (JSONB in PostgreSQL, JSON in MySQL, BSON documents in MongoDB). This kind of data is harder to index than regular strings/numbers.</p><p>When scanning structured data, you&rsquo;d likely be interested in:</p><ul><li>knowing whether an element belongs to an array (<code>"postgresql" IN 'tags'</code>)</li><li>finding patterns with regular expressions (<code>'text' match "*indexes*"</code>)</li><li>identifying lexemes in documents (<code>"explain" in 'text'</code>, <code>tsvector</code> in PostgreSQL)</li></ul><p>For instance, if a database contains variations of a word: <code>identification</code>, <code>identifying</code>, <code>identified</code>, etc, when looking for <code>identify</code>, I would like to retrieve all the previous documents. Generalized Inverted Indexes (GIN) allow handling such composite data.</p><hr><h1 id=real-life>Real life</h1><p>Let&rsquo;s pop up a dockerized instance of PostgreSQL in the same directory where you created the data:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>▶ docker pull postgres:14
-▶ docker run --name postgres --mount <span class=nv>type</span><span class=o>=</span>bind,source<span class=o>=</span><span class=s2>&#34;</span><span class=k>$(</span><span class=nb>pwd</span><span class=k>)</span><span class=s2>&#34;</span>,target<span class=o>=</span>/app -e <span class=nv>POSTGRES_PASSWORD</span><span class=o>=</span>foo postgres:14 postgres
-</code></pre></td></tr></table>
-</div>
-</div><p>In another tab, let&rsquo;s populate our database with the initial data:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>▶ docker pull postgres:14
+</span></span><span class=line><span class=cl>▶ docker run --name postgres --mount <span class=nv>type</span><span class=o>=</span>bind,source<span class=o>=</span><span class=s2>&#34;</span><span class=k>$(</span><span class=nb>pwd</span><span class=k>)</span><span class=s2>&#34;</span>,target<span class=o>=</span>/app -e <span class=nv>POSTGRES_PASSWORD</span><span class=o>=</span>foo postgres:14 postgres
+</span></span></code></pre></td></tr></table></div></div><p>In another tab, let&rsquo;s populate our database with the initial data:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
 </span><span class=lnt>7
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash>▶ docker <span class=nb>exec</span> -it postgres bash
-root@56e100e32bb4:/# psql -U postgres
-psql <span class=o>(</span>14.1 <span class=o>(</span>Debian 14.1-1.pgdg110+1<span class=o>))</span>
-Type <span class=s2>&#34;help&#34;</span> <span class=k>for</span> help.
-
-<span class=nv>postgres</span><span class=o>=</span><span class=c1># CREATE TABLE contacts (uuid TEXT, name TEXT);</span>
-<span class=nv>postgres</span><span class=o>=</span><span class=c1># COPY contacts(uuid, name) FROM &#39;/app/mini.db&#39; DELIMITER &#39;,&#39; CSV;</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>Without indexing:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>▶ docker <span class=nb>exec</span> -it postgres bash
+</span></span><span class=line><span class=cl>root@56e100e32bb4:/# psql -U postgres
+</span></span><span class=line><span class=cl>psql <span class=o>(</span>14.1 <span class=o>(</span>Debian 14.1-1.pgdg110+1<span class=o>))</span>
+</span></span><span class=line><span class=cl>Type <span class=s2>&#34;help&#34;</span> <span class=k>for</span> help.
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=nv>postgres</span><span class=o>=</span><span class=c1># CREATE TABLE contacts (uuid TEXT, name TEXT);</span>
+</span></span><span class=line><span class=cl><span class=nv>postgres</span><span class=o>=</span><span class=c1># COPY contacts(uuid, name) FROM &#39;/app/mini.db&#39; DELIMITER &#39;,&#39; CSV;</span>
+</span></span></code></pre></td></tr></table></div></div><p>Without indexing:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nv>postgres</span><span class=o>=</span><span class=c1># \timing on</span>
-<span class=nv>postgres</span><span class=o>=</span><span class=c1># SELECT * FROM contacts WHERE name LIKE &#39;Bobby%&#39;;</span>
-Time: 1040.061 ms <span class=o>(</span>00:01.040<span class=o>)</span>
-</code></pre></td></tr></table>
-</div>
-</div><p>After creating a GIN index on names:</p>
-<div class=highlight><div class=chroma>
-<table class=lntable><tr><td class=lntd>
-<pre tabindex=0 class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>postgres</span><span class=o>=</span><span class=c1># \timing on</span>
+</span></span><span class=line><span class=cl><span class=nv>postgres</span><span class=o>=</span><span class=c1># SELECT * FROM contacts WHERE name LIKE &#39;Bobby%&#39;;</span>
+</span></span><span class=line><span class=cl>Time: 1040.061 ms <span class=o>(</span>00:01.040<span class=o>)</span>
+</span></span></code></pre></td></tr></table></div></div><p>After creating a GIN index on names:</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4
 </span><span class=lnt>5
 </span><span class=lnt>6
-</span></code></pre></td>
-<td class=lntd>
-<pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=nv>postgres</span><span class=o>=</span><span class=c1># create extension pg_trgm;</span>
-<span class=nv>postgres</span><span class=o>=</span><span class=c1># CREATE INDEX gin ON contacts USING GIN (name gin_trgm_ops);</span>
-CREATE INDEX
-Time: 49202.558 ms <span class=o>(</span>00:49.203<span class=o>)</span>
-<span class=nv>postgres</span><span class=o>=</span><span class=c1># SELECT * FROM contacts WHERE name LIKE &#39;Bobby%&#39;;</span>
-Time: 105.556 ms
-</code></pre></td></tr></table>
-</div>
-</div><p>There you go: in this trivial scenario, GIN divided by 10 the response time of your PostgreSQL backend!</p>
-<hr>
-<h1 id=sum-it-up>Sum it up</h1>
-<p>Indexes are a must-have in databases. Looking up a record can prove costly when you manipulate large amounts of data and when you need to join data efficiently.</p>
-<p>We saw three kinds of indexes:</p>
-<ul>
-<li>in-memory hash indexes for exact matching;</li>
-<li>B-tree indexes for ordered data;</li>
-<li>GIN indexes for complex structured data.</li>
-</ul>
-<p>All popular databases (MySQL, PostgreSQL) implement these three indexes. But there are much more (LSM-trees, GiST). They will come in handy for all CPU-intensive lookups, so think of it before crashing your production database!</p>
-</article>
-</main>
-<link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css integrity=sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc crossorigin=anonymous>
-<script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js integrity=sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp crossorigin=anonymous></script>
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>postgres</span><span class=o>=</span><span class=c1># create extension pg_trgm;</span>
+</span></span><span class=line><span class=cl><span class=nv>postgres</span><span class=o>=</span><span class=c1># CREATE INDEX gin ON contacts USING GIN (name gin_trgm_ops);</span>
+</span></span><span class=line><span class=cl>CREATE INDEX
+</span></span><span class=line><span class=cl>Time: 49202.558 ms <span class=o>(</span>00:49.203<span class=o>)</span>
+</span></span><span class=line><span class=cl><span class=nv>postgres</span><span class=o>=</span><span class=c1># SELECT * FROM contacts WHERE name LIKE &#39;Bobby%&#39;;</span>
+</span></span><span class=line><span class=cl>Time: 105.556 ms
+</span></span></code></pre></td></tr></table></div></div><p>There you go: in this trivial scenario, GIN divided by 10 the response time of your PostgreSQL backend!</p><hr><h1 id=sum-it-up>Sum it up</h1><p>Indexes are a must-have in databases. Looking up a record can prove costly when you manipulate large amounts of data and when you need to join data efficiently.</p><p>We saw three kinds of indexes:</p><ul><li>in-memory hash indexes for exact matching;</li><li>B-tree indexes for ordered data;</li><li>GIN indexes for complex structured data.</li></ul><p>All popular databases (MySQL, PostgreSQL) implement these three indexes. But there are much more (LSM-trees, GiST). They will come in handy for all CPU-intensive lookups, so think of it before crashing your production database!</p></article></main><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.css integrity=sha384-Um5gpz1odJg5Z4HAmzPtgZKdTBHZdw8S29IecapCSB31ligYPhHQZMIlWLYQGVoc crossorigin=anonymous><script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/katex.min.js integrity=sha384-YNHdsYkH6gMx9y3mRkmcJ2mFUjTd0qNQQvY9VYZgQd7DcN7env35GzlmFaZ23JGp crossorigin=anonymous></script>
 <script defer src=https://cdn.jsdelivr.net/npm/katex@0.13.11/dist/contrib/auto-render.min.js integrity=sha384-vZTG03m+2yp6N6BNi5iM4rW4oIwk5DfcNdFfxkk9ZWpDriOkXX8voJBFrAO7MpVl crossorigin=anonymous></script>
-<script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:!0},{left:'$',right:'$',display:!1},{left:'\\(',right:'\\)',display:!1},{left:'\\[',right:'\\]',display:!0}],throwOnError:!1})})</script>
-<footer class="mt-8 flex sm:flex-col-reverse justify-between items-center">
-<p class="mt-0 text-sm">
-© Pierre Marcenac | 2022 |
+<script>document.addEventListener("DOMContentLoaded",function(){renderMathInElement(document.body,{delimiters:[{left:"$$",right:"$$",display:!0},{left:"$",right:"$",display:!1},{left:"\\(",right:"\\)",display:!1},{left:"\\[",right:"\\]",display:!0}],throwOnError:!1})})</script><footer class="mt-8 flex sm:flex-col-reverse justify-between items-center"><p class="mt-0 text-sm">© Pierre Marcenac | 2022 |
 <a href=https://gohugo.io target=_blank rel="noopener noreferrer">Hugo</a> on
-<a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a>
-</p>
-<p class="flex items-center mt-0">
-<a class="icon mx-2" href=https://github.com/marcenacp title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg>
-</a>
-<a class="icon mx-2" href=https://linkedin.com/in/pierre-marcenac title=linkedin><svg fill="#0073b1" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853.0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601.0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144.0-2.063-.926-2.063-2.065.0-1.138.92-2.063 2.063-2.063 1.14.0 2.064.925 2.064 2.063.0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225.0H1.771C.792.0.0.774.0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2.0 22.222.0h.003z"/></svg>
-</a>
-<a class="icon mx-2" href=https://twitter.com/marcenac title=twitter><svg fill="#1da1f2" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Twitter</title><path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717.0-4.92 2.203-4.92 4.917.0.39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475.0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314.0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39.0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054.0 13.999-7.496 13.999-13.986.0-.209.0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"/></svg>
-</a>
-</p>
-</footer>
-</body>
-</html>
+<a href=https://github.com/mivinci/hugo-theme-minima target=_blank rel="noopener noreferrer">Minima</a></p><p class="flex items-center mt-0"><a class="icon mx-2" href=https://github.com/marcenacp title=github><svg fill="#63636f" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>GitHub</title><path d="M12 .297c-6.63.0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577.0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93.0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176.0.0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22.0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22.0 1.606-.015 2.896-.015 3.286.0.315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/></svg></a><a class="icon mx-2" href=https://linkedin.com/in/pierre-marcenac title=linkedin><svg fill="#0073b1" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>LinkedIn</title><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853.0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601.0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144.0-2.063-.926-2.063-2.065.0-1.138.92-2.063 2.063-2.063 1.14.0 2.064.925 2.064 2.063.0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225.0H1.771C.792.0.0.774.0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2.0 22.222.0h.003z"/></svg></a><a class="icon mx-2" href=https://twitter.com/marcenac title=twitter><svg fill="#1da1f2" width="18" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Twitter</title><path d="M23.954 4.569c-.885.389-1.83.654-2.825.775 1.014-.611 1.794-1.574 2.163-2.723-.951.555-2.005.959-3.127 1.184-.896-.959-2.173-1.559-3.591-1.559-2.717.0-4.92 2.203-4.92 4.917.0.39.045.765.127 1.124C7.691 8.094 4.066 6.13 1.64 3.161c-.427.722-.666 1.561-.666 2.475.0 1.71.87 3.213 2.188 4.096-.807-.026-1.566-.248-2.228-.616v.061c0 2.385 1.693 4.374 3.946 4.827-.413.111-.849.171-1.296.171-.314.0-.615-.03-.916-.086.631 1.953 2.445 3.377 4.604 3.417-1.68 1.319-3.809 2.105-6.102 2.105-.39.0-.779-.023-1.17-.067 2.189 1.394 4.768 2.209 7.557 2.209 9.054.0 13.999-7.496 13.999-13.986.0-.209.0-.42-.015-.63.961-.689 1.8-1.56 2.46-2.548l-.047-.02z"/></svg></a></p></footer></body></html>
